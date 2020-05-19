@@ -1,7 +1,7 @@
 import "https://deno.land/x/dotenv/load.ts";
 import { Application } from "https://deno.land/x/denotrain@v0.4.0/mod.ts";
 import { bookRouter } from "./routers/book.ts";
-import { client } from "./client.ts";
+import { client } from "./db/client.ts";
 
 await client.connect();
 

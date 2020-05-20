@@ -1,13 +1,19 @@
 import { Context } from "https://deno.land/x/denotrain@v0.4.0/mod.ts";
-import { IResponse, IBook, IError } from "../types.ts";
+import { IResponse, IBook, ID } from "../types.ts";
 import { Book } from "../models/Book.ts";
+import { Validator } from "../validation/Validator.ts";
 import {
   errorResponse,
   goodResponse,
   serverErrorResponse
 } from "../utils/responses.ts";
+import {
+  idValidationSchema,
+  bookValidationSchema
+} from "../validation/schemas.ts";
 
 export class BookController {
+  // @route GET /api/books
   static async getAll({ res }: Context): Promise<IResponse<IBook[]>> {
     try {
       const books = await Book.find();
@@ -18,9 +24,20 @@ export class BookController {
     }
   }
 
+  // @route GET /api/books/:id
   static async getSingle({ req, res }: Context): Promise<IResponse<IBook>> {
+    const id = req.params.id as ID;
+
+    const v = new Validator({ id }, { id: idValidationSchema });
+    const errors = v.validate();
+
+    if (errors.length) {
+      res.setStatus(400);
+      return errorResponse(errors);
+    }
+
     try {
-      const book = await Book.findOne(req.params.id as number);
+      const book = await Book.findOne(id);
 
       if (!book) {
         res.setStatus(400);
@@ -39,31 +56,21 @@ export class BookController {
     }
   }
 
+  // @route POST /api/books
   static async create({ req, res }: Context): Promise<IResponse<IBook>> {
     try {
       const { title, year } = req.body;
-      const errors: IError[] = [];
+      const args = { title, year };
 
-      if (!title) {
-        errors.push({
-          path: "title",
-          message: "Title is required"
-        });
-      }
-
-      if (!year) {
-        errors.push({
-          path: "year",
-          message: "Year is required"
-        });
-      }
+      const v = new Validator(args, bookValidationSchema());
+      const errors = v.validate();
 
       if (errors.length) {
         res.setStatus(400);
         return errorResponse(errors);
       }
 
-      const book = await Book.insert({ title, year });
+      const book = await Book.insert(args);
 
       res.setStatus(201);
       return goodResponse(book);
@@ -73,14 +80,35 @@ export class BookController {
     }
   }
 
+  // @route PUT /api/books/:id
   static async edit({ req, res }: Context): Promise<IResponse<IBook>> {
     try {
       const { title, year } = req.body;
-      const book = await Book.update({
-        id: req.params.id as number,
-        title,
-        year
+      const args = { id: req.params.id as ID, title, year };
+
+      const v = new Validator(args, {
+        id: idValidationSchema,
+        ...bookValidationSchema()
       });
+
+      const errors = v.validate();
+
+      if (errors.length) {
+        res.setStatus(400);
+        return errorResponse(errors);
+      }
+
+      const book = await Book.update(args);
+
+      if (!book) {
+        res.setStatus(400);
+        return errorResponse([
+          {
+            path: "id",
+            message: "Could not find book by given ID"
+          }
+        ]);
+      }
 
       return goodResponse(book);
     } catch (err) {
@@ -89,9 +117,20 @@ export class BookController {
     }
   }
 
+  // @route DELETE /api/books/:id
   static async remove({ req, res }: Context): Promise<IResponse<boolean>> {
+    const id = req.params.id as ID;
+
+    const v = new Validator({ id }, { id: idValidationSchema });
+    const errors = v.validate();
+
+    if (errors.length) {
+      res.setStatus(400);
+      return errorResponse(errors);
+    }
+
     try {
-      await Book.delete(req.params.id as number);
+      await Book.delete(id);
       return goodResponse(true);
     } catch (err) {
       console.log(err);

@@ -1,5 +1,7 @@
+export type ID = number;
+
 export interface IBook {
-  id: number;
+  id: ID;
   title: string;
   year: number;
 }
@@ -22,3 +24,14 @@ export interface IErrorResponse {
 }
 
 export type IResponse<T> = IErrorResponse | IGoodResponse<T>;
+
+export interface MinMaxRule {
+  min?: number;
+  max?: number;
+}
+
+export interface ValidatorRules {
+  required?: boolean;
+  string?: MinMaxRule;
+  integer?: MinMaxRule;
+}

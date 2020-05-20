@@ -1,29 +1,10 @@
-import { IBook } from "../types.ts";
+import { IBook, ID } from "../types.ts";
 import { client } from "../db/client.ts";
 
 export class Book {
   private static table: string = "books";
 
-  static async find(): Promise<IBook[]> {
-    const query = await client.query(`SELECT * FROM ${this.table};`);
-    return query.rows.map(([id, title, year]) => ({
-      id,
-      title,
-      year
-    }));
-  }
-
-  static async findOne(bookId: IBook["id"]): Promise<IBook | null> {
-    const query = await client.query({
-      text: `SELECT * FROM ${this.table} WHERE id = $1;`,
-      args: [bookId]
-    });
-
-    const [result] = query.rows;
-    if (!result) return null;
-
-    const [id, title, year] = result;
-
+  private static formatRow([id, title, year]: any[]): IBook {
     return {
       id,
       title,
@@ -31,37 +12,48 @@ export class Book {
     };
   }
 
+  static async find(): Promise<IBook[]> {
+    const result = await client.query(
+      `SELECT * FROM ${this.table} ORDER BY id;`
+    );
+
+    return result.rows.map(row => this.formatRow(row));
+  }
+
+  static async findOne(id: ID): Promise<IBook | null> {
+    const result = await client.query({
+      text: `SELECT * FROM ${this.table} WHERE id = $1 LIMIT 1;`,
+      args: [id]
+    });
+
+    const [row] = result.rows;
+    if (!row) return null;
+
+    return this.formatRow(row);
+  }
+
   static async insert(args: Omit<IBook, "id">): Promise<IBook> {
-    const query = await client.query({
+    const result = await client.query({
       text: `INSERT INTO ${this.table}(title, year) VALUES($1, $2) RETURNING *;`,
       args: [args.title, args.year]
     });
 
-    const [id, title, year] = query.rows[0];
-
-    return {
-      id,
-      title,
-      year
-    };
+    return this.formatRow(result.rows[0]);
   }
 
-  static async update(book: IBook): Promise<IBook> {
-    const query = await client.query({
-      text: `UPDATE ${this.table} SET title = $1, year = $2 WHERE id = $3 RETURNING *;`,
-      args: [book.title, book.year, book.id]
+  static async update({ id, title, year }: IBook): Promise<IBook | null> {
+    const result = await client.query({
+      text: `UPDATE ${this.table} SET title = $2, year = $3 WHERE id = $1 RETURNING *;`,
+      args: [id, title, year]
     });
 
-    const [id, title, year] = query.rows[0];
+    const [row] = result.rows;
+    if (!row) return null;
 
-    return {
-      id,
-      title,
-      year
-    };
+    return this.formatRow(row);
   }
 
-  static async delete(id: IBook["id"]): Promise<void> {
+  static async delete(id: ID): Promise<void> {
     await client.query({
       text: `DELETE FROM ${this.table} WHERE id = $1;`,
       args: [id]

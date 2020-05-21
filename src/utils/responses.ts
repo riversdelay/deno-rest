@@ -1,5 +1,5 @@
 import { IError, IErrorResponse, IGoodResponse } from "../types.ts";
-import { Response } from "https://deno.land/x/denotrain@v0.4.0/mod.ts";
+import { Response } from "https://deno.land/x/denotrain@v0.4.4/mod.ts";
 import { serverError } from "./constants.ts";
 
 export const errorResponse = (errors: IError[]): IErrorResponse => ({
@@ -23,3 +23,10 @@ export const serverErrorResponse = (res: Response) => {
     }
   ]);
 };
+
+export const notFoundResponse = (key: string): IError[] => [
+  {
+    path: "id",
+    message: `Could not find ${key} by given ID`
+  }
+];

@@ -1,4 +1,4 @@
-import { Router } from "https://deno.land/x/denotrain@v0.4.0/mod.ts";
+import { Router } from "https://deno.land/x/denotrain@v0.4.4/mod.ts";
 import { BookController } from "../controllers/BookController.ts";
 
 const bookRouter = new Router();

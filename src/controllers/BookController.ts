@@ -1,7 +1,8 @@
-import { Context } from "https://deno.land/x/denotrain@v0.4.0/mod.ts";
+import { Context } from "https://deno.land/x/denotrain@v0.4.4/mod.ts";
 import { IResponse, IBook, ID } from "../types.ts";
 import { Book } from "../models/Book.ts";
 import { Validator } from "../validation/Validator.ts";
+import { notFoundResponse } from "../utils/responses.ts";
 import {
   errorResponse,
   goodResponse,
@@ -41,12 +42,7 @@ export class BookController {
 
       if (!book) {
         res.setStatus(400);
-        return errorResponse([
-          {
-            path: "id",
-            message: "Could not find book by given ID"
-          }
-        ]);
+        return errorResponse(notFoundResponse("book"));
       }
 
       return goodResponse(book);
@@ -102,12 +98,7 @@ export class BookController {
 
       if (!book) {
         res.setStatus(400);
-        return errorResponse([
-          {
-            path: "id",
-            message: "Could not find book by given ID"
-          }
-        ]);
+        return errorResponse(notFoundResponse("book"));
       }
 
       return goodResponse(book);

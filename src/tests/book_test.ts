@@ -1,6 +1,6 @@
+import { IBook } from "../types.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { IResponse, IBook } from "../types.ts";
-import { notFoundResponse } from "../utils/responses.ts";
+import { goodResponse, notFoundResponse } from "../utils/responses.ts";
 
 const endpoint = "/api/books";
 const url = `http://localhost:4000${endpoint}`;
@@ -23,11 +23,9 @@ Deno.test(`route GET ${endpoint}`, async () => {
 
   assertEquals(res.ok, true);
 
-  const { ok, errors, data } = (await res.json()) as IResponse<IBook[]>;
+  const data = await res.json();
 
-  assertEquals(ok, true);
-  assertEquals(errors, null);
-  assertEquals(data, []);
+  assertEquals(data, goodResponse([]));
 });
 
 Deno.test(`route POST ${endpoint}`, async () => {
@@ -39,12 +37,10 @@ Deno.test(`route POST ${endpoint}`, async () => {
 
   assertEquals(res.ok, true);
 
-  const { ok, errors, data } = (await res.json()) as IResponse<IBook>;
+  const data = await res.json();
 
-  assertEquals(ok, true);
-  assertEquals(errors, null);
-  id = data!.id;
-  assertEquals(data, { id, ...newTestBook });
+  id = data.data.id;
+  assertEquals(data, goodResponse({ id, ...newTestBook }));
 });
 
 Deno.test(`route GET ${endpoint}${param}`, async () => {
@@ -52,11 +48,9 @@ Deno.test(`route GET ${endpoint}${param}`, async () => {
 
   assertEquals(res.ok, true);
 
-  const { ok, errors, data } = (await res.json()) as IResponse<IBook>;
+  const data = await res.json();
 
-  assertEquals(ok, true);
-  assertEquals(errors, null);
-  assertEquals(data, { id, ...newTestBook });
+  assertEquals(data, goodResponse({ id, ...newTestBook }));
 });
 
 Deno.test(`route PUT ${endpoint}${param}`, async () => {
@@ -68,11 +62,9 @@ Deno.test(`route PUT ${endpoint}${param}`, async () => {
 
   assertEquals(res.ok, true);
 
-  const { ok, errors, data } = (await res.json()) as IResponse<IBook>;
+  const data = await res.json();
 
-  assertEquals(ok, true);
-  assertEquals(errors, null);
-  assertEquals(data, { id, ...updateTestBook });
+  assertEquals(data, goodResponse({ id, ...updateTestBook }));
 });
 
 Deno.test(`route DELETE ${endpoint}${param}`, async () => {
@@ -82,11 +74,9 @@ Deno.test(`route DELETE ${endpoint}${param}`, async () => {
 
   assertEquals(res.ok, true);
 
-  const { ok, errors, data } = (await res.json()) as IResponse<boolean>;
+  const data = await res.json();
 
-  assertEquals(ok, true);
-  assertEquals(errors, null);
-  assertEquals(data, true);
+  assertEquals(data, goodResponse(true));
 });
 
 Deno.test("make sure book is deleted", async () => {
@@ -94,9 +84,7 @@ Deno.test("make sure book is deleted", async () => {
 
   assertEquals(res.ok, false);
 
-  const { ok, errors, data } = (await res.json()) as IResponse<IBook>;
+  const data = await res.json();
 
-  assertEquals(ok, false);
-  assertEquals(errors, notFoundResponse("book"));
-  assertEquals(data, null);
+  assertEquals(data, notFoundResponse("book"));
 });

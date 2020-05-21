@@ -2,11 +2,11 @@ import { Context } from "https://deno.land/x/denotrain@v0.4.4/mod.ts";
 import { IResponse, IBook, ID } from "../types.ts";
 import { Book } from "../models/Book.ts";
 import { Validator } from "../validation/Validator.ts";
-import { notFoundResponse } from "../utils/responses.ts";
 import {
   errorResponse,
   goodResponse,
-  serverErrorResponse
+  serverErrorResponse,
+  notFoundResponse
 } from "../utils/responses.ts";
 import {
   idValidationSchema,
@@ -42,7 +42,7 @@ export class BookController {
 
       if (!book) {
         res.setStatus(400);
-        return errorResponse(notFoundResponse("book"));
+        return notFoundResponse("book");
       }
 
       return goodResponse(book);
@@ -98,7 +98,7 @@ export class BookController {
 
       if (!book) {
         res.setStatus(400);
-        return errorResponse(notFoundResponse("book"));
+        return notFoundResponse("book");
       }
 
       return goodResponse(book);

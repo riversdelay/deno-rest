@@ -4,7 +4,12 @@ interface INode {
   id: ID;
 }
 
+export interface IAuthor extends INode {
+  name: string;
+}
+
 export interface IBook extends INode {
+  authorId?: ID;
   title: string;
   year: number;
   pages: number;
@@ -12,10 +17,6 @@ export interface IBook extends INode {
   language: string;
   edition: string;
   isbn: number;
-}
-
-export interface IAuthor extends INode {
-  name: string;
 }
 
 export interface IError {

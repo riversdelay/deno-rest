@@ -6,6 +6,7 @@ export class Book {
 
   private static formatRow([
     id,
+    authorId,
     title,
     year,
     pages,
@@ -16,6 +17,7 @@ export class Book {
   ]: any[]): IBook {
     return {
       id,
+      authorId,
       title,
       year,
       pages,
@@ -47,6 +49,7 @@ export class Book {
   }
 
   static async insert({
+    authorId,
     title,
     year,
     pages,
@@ -59,12 +62,12 @@ export class Book {
       text: `
         INSERT INTO
           ${this.table}
-            (title, year, pages, genre, language, edition, isbn)
+            (authorId, title, year, pages, genre, language, edition, isbn)
           VALUES
-            ($1, $2, $3, $4, $5, $6, $7)
+            ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *;
       `,
-      args: [title, year, pages, genre, language, edition, isbn]
+      args: [authorId, title, year, pages, genre, language, edition, isbn]
     });
 
     return this.formatRow(result.rows[0]);

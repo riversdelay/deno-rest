@@ -56,6 +56,7 @@ export class BookController {
   static async create({ req, res }: Context): Promise<IResponse<IBook>> {
     try {
       const {
+        authorId,
         title,
         year,
         pages,
@@ -66,6 +67,7 @@ export class BookController {
       } = req.body as Omit<IBook, "id">;
 
       const args: Omit<IBook, "id"> = {
+        authorId,
         title,
         year,
         pages,
@@ -75,7 +77,10 @@ export class BookController {
         isbn
       };
 
-      const v = new Validator(args, bookValidationSchema());
+      const v = new Validator(args, {
+        ...bookValidationSchema(),
+        authorId: idValidationSchema
+      });
       const errors = v.validate();
 
       if (errors.length) {

@@ -1,4 +1,4 @@
-import { IBook } from "../types.ts";
+import { IBook, ID } from "../types.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { goodResponse, notFoundResponse } from "../utils/responses.ts";
 
@@ -6,16 +6,29 @@ const endpoint = "/api/books";
 const url = `http://localhost:4000${endpoint}`;
 const param = "/:id";
 
-let id: number = 1;
+let id: ID = 1;
+
+const num = Math.pow(10, 12);
+const getISBN = () => Math.floor(num + Math.random() * (num * 9));
 
 const newTestBook: Omit<IBook, "id"> = {
   title: "Test Book",
-  year: 2019
+  year: 2019,
+  pages: 100,
+  genre: "Fantasy",
+  language: "English",
+  edition: "First edition",
+  isbn: getISBN()
 };
 
 const updateTestBook: Omit<IBook, "id"> = {
   title: "Updated Test Book",
-  year: 2020
+  year: 2020,
+  pages: 200,
+  genre: "Science fiction",
+  language: "Spanish",
+  edition: "Second edition",
+  isbn: getISBN()
 };
 
 Deno.test(`route GET ${endpoint}`, async () => {

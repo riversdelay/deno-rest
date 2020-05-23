@@ -4,11 +4,25 @@ import { client } from "../db/client.ts";
 export class Book {
   private static table: string = "books";
 
-  private static formatRow([id, title, year]: any[]): IBook {
+  private static formatRow([
+    id,
+    title,
+    year,
+    pages,
+    genre,
+    language,
+    edition,
+    isbn
+  ]: any[]): IBook {
     return {
       id,
       title,
-      year
+      year,
+      pages,
+      genre,
+      language,
+      edition,
+      isbn: parseInt(isbn, 10)
     };
   }
 
@@ -32,19 +46,54 @@ export class Book {
     return this.formatRow(row);
   }
 
-  static async insert(args: Omit<IBook, "id">): Promise<IBook> {
+  static async insert({
+    title,
+    year,
+    pages,
+    genre,
+    language,
+    edition,
+    isbn
+  }: Omit<IBook, "id">): Promise<IBook> {
     const result = await client.query({
-      text: `INSERT INTO ${this.table}(title, year) VALUES($1, $2) RETURNING *;`,
-      args: [args.title, args.year]
+      text: `
+        INSERT INTO
+          ${this.table}
+            (title, year, pages, genre, language, edition, isbn)
+          VALUES
+            ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING *;
+      `,
+      args: [title, year, pages, genre, language, edition, isbn]
     });
 
     return this.formatRow(result.rows[0]);
   }
 
-  static async update({ id, title, year }: IBook): Promise<IBook | null> {
+  static async update({
+    id,
+    title,
+    year,
+    pages,
+    genre,
+    language,
+    edition,
+    isbn
+  }: IBook): Promise<IBook | null> {
     const result = await client.query({
-      text: `UPDATE ${this.table} SET title = $2, year = $3 WHERE id = $1 RETURNING *;`,
-      args: [id, title, year]
+      text: `
+        UPDATE ${this.table} SET
+          title = $2,
+          year = $3,
+          pages = $4,
+          genre = $5,
+          language = $6,
+          edition = $7,
+          isbn = $8
+        WHERE id = $1
+        RETURNING *;
+      `,
+      args: [id, title, year, pages, genre, language, edition, isbn]
     });
 
     const [row] = result.rows;

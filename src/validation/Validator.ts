@@ -1,10 +1,7 @@
-import { ValidatorRules, IError } from "../types.ts";
+import { Rules, IError } from "../types.ts";
 
 export class Validator<T extends object> {
-  constructor(
-    private data: T,
-    private rules: { [K in keyof T]?: ValidatorRules }
-  ) {}
+  constructor(private data: T, private rules: Rules<T>) {}
 
   private isDefined(value: any): boolean {
     return value !== undefined;
@@ -15,7 +12,19 @@ export class Validator<T extends object> {
   }
 
   private isInt(value: any): boolean {
-    return typeof value === "number" && Number.isInteger(value);
+    return Number.isInteger(value);
+  }
+
+  private isISBN(value: any): boolean {
+    if (this.isInt(value) || this.isString(value)) {
+      const regexISBN = /^(\d{10}|\d{13})$/;
+
+      if (regexISBN.test(value.toString())) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private strMinLength(str: string, min: number): boolean {
@@ -41,7 +50,7 @@ export class Validator<T extends object> {
       const rule = this.rules[key];
       if (!rule) continue;
 
-      const { required, integer, string } = rule!;
+      const { required, integer, string, isbn } = rule!;
       const value = this.data[key] as any;
 
       if (!this.isDefined(value)) {
@@ -60,20 +69,20 @@ export class Validator<T extends object> {
           if (min && !this.intMin(value, min)) {
             errors.push({
               path: key,
-              message: `${key} needs to be equal to or higher than ${min}`
+              message: `${key} must be equal to or higher than ${min}`
             });
           }
 
           if (max && !this.intMax(value, max)) {
             errors.push({
               path: key,
-              message: `${key} needs to be equal to or lesser than ${max}`
+              message: `${key} must be equal to or lesser than ${max}`
             });
           }
         } else {
           errors.push({
             path: key,
-            message: `${key} needs to be an integer`
+            message: `${key} must be an integer`
           });
         }
       }
@@ -85,22 +94,29 @@ export class Validator<T extends object> {
           if (min && !this.strMinLength(value, min)) {
             errors.push({
               path: key,
-              message: `${key}'s length needs to be equal to or higher than ${min}`
+              message: `${key}'s length must be equal to or higher than ${min}`
             });
           }
 
           if (max && !this.strMaxLength(value, max)) {
             errors.push({
               path: key,
-              message: `${key}'s length needs to be equal to or lesser than ${max}`
+              message: `${key}'s length must be equal to or lesser than ${max}`
             });
           }
         } else {
           errors.push({
             path: key,
-            message: `${key} needs to be a string`
+            message: `${key} must be a string`
           });
         }
+      }
+
+      if (isbn && !this.isISBN(value)) {
+        errors.push({
+          path: key,
+          message: `${key} must be a valid ISBN`
+        });
       }
     }
 

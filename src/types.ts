@@ -1,9 +1,17 @@
 export type ID = number;
 
-export interface IBook {
+interface INode {
   id: ID;
+}
+
+export interface IBook extends INode {
   title: string;
   year: number;
+  pages: number;
+  genre: string;
+  language: string;
+  edition: string;
+  isbn: number;
 }
 
 export interface IError {
@@ -34,4 +42,7 @@ export interface ValidatorRules {
   required?: boolean;
   string?: MinMaxRule;
   integer?: MinMaxRule;
+  isbn?: boolean;
 }
+
+export type Rules<T> = { [K in keyof T]?: ValidatorRules };

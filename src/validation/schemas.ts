@@ -1,4 +1,4 @@
-import { ValidatorRules, IBook } from "../types.ts";
+import { ValidatorRules, IBook, Rules } from "../types.ts";
 import { minStringLength, maxStringLength } from "../utils/constants.ts";
 
 export const idValidationSchema: ValidatorRules = {
@@ -8,10 +8,7 @@ export const idValidationSchema: ValidatorRules = {
   }
 };
 
-export const bookValidationSchema = (): Record<
-  keyof Omit<IBook, "id">,
-  ValidatorRules
-> => ({
+export const bookValidationSchema = (): Rules<Omit<IBook, "id">> => ({
   title: {
     required: true,
     string: {
@@ -24,6 +21,40 @@ export const bookValidationSchema = (): Record<
     integer: {
       min: 1,
       max: new Date().getFullYear()
+    }
+  },
+  pages: {
+    required: true,
+    integer: {
+      min: 1
+    }
+  },
+  genre: {
+    required: true,
+    string: {
+      min: minStringLength,
+      max: maxStringLength
+    }
+  },
+  language: {
+    required: true,
+    string: {
+      min: 2,
+      max: maxStringLength
+    }
+  },
+  edition: {
+    required: true,
+    string: {
+      min: minStringLength,
+      max: maxStringLength
+    }
+  },
+  isbn: {
+    required: true,
+    isbn: true,
+    integer: {
+      min: 1
     }
   }
 });

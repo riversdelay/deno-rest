@@ -55,8 +55,25 @@ export class BookController {
   // @route POST /api/books
   static async create({ req, res }: Context): Promise<IResponse<IBook>> {
     try {
-      const { title, year } = req.body;
-      const args = { title, year };
+      const {
+        title,
+        year,
+        pages,
+        genre,
+        language,
+        edition,
+        isbn
+      } = req.body as Omit<IBook, "id">;
+
+      const args: Omit<IBook, "id"> = {
+        title,
+        year,
+        pages,
+        genre,
+        language,
+        edition,
+        isbn
+      };
 
       const v = new Validator(args, bookValidationSchema());
       const errors = v.validate();
@@ -79,8 +96,26 @@ export class BookController {
   // @route PUT /api/books/:id
   static async edit({ req, res }: Context): Promise<IResponse<IBook>> {
     try {
-      const { title, year } = req.body;
-      const args = { id: req.params.id as ID, title, year };
+      const {
+        title,
+        year,
+        pages,
+        genre,
+        language,
+        edition,
+        isbn
+      } = req.body as Omit<IBook, "id">;
+
+      const args: IBook = {
+        id: req.params.id as ID,
+        title,
+        year,
+        pages,
+        genre,
+        language,
+        edition,
+        isbn
+      };
 
       const v = new Validator(args, {
         id: idValidationSchema,

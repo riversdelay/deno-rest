@@ -24,7 +24,7 @@ export class Book {
       genre,
       language,
       edition,
-      isbn: parseInt(isbn, 10)
+      isbn
     };
   }
 

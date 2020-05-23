@@ -16,7 +16,7 @@ export interface IBook extends INode {
   genre: string;
   language: string;
   edition: string;
-  isbn: number;
+  isbn: string;
 }
 
 export interface IError {

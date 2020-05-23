@@ -53,8 +53,9 @@ export const bookValidationSchema = (): Rules<Omit<IBook, "id">> => ({
   isbn: {
     required: true,
     isbn: true,
-    integer: {
-      min: 1
+    string: {
+      min: 10,
+      max: 13
     }
   }
 });

@@ -18,7 +18,7 @@ const updateTestAuthor: Omit<IAuthor, "id"> = {
 };
 
 const num = Math.pow(10, 12);
-const getISBN = () => Math.floor(num + Math.random() * (num * 9));
+const getISBN = () => Math.floor(num + Math.random() * (num * 9)).toString();
 
 const newTestBook: Omit<IBook, "id" | "authorId"> = {
   title: "Test Book",

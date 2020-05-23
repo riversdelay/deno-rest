@@ -1,4 +1,3 @@
-import "https://deno.land/x/dotenv/load.ts";
 import { isTesting } from "./utils/isTesting.ts";
 import { client } from "./db/client.ts";
 import { dropData } from "./db/drop-data.ts";

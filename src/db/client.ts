@@ -1,3 +1,4 @@
+import "https://deno.land/x/dotenv/load.ts";
 import { Client } from "https://deno.land/x/postgres/mod.ts";
 import { isTesting } from "../utils/isTesting.ts";
 

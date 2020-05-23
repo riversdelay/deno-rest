@@ -1,34 +1,19 @@
 import { apiEndpoint, host, param } from "./shared.ts";
-import { IBook, ID } from "../types.ts";
+import { IAuthor, ID } from "../types.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { goodResponse, notFoundResponse } from "../utils/responses.ts";
 
-const endpoint = `${apiEndpoint}/books`;
+const endpoint = `${apiEndpoint}/authors`;
 const url = host + endpoint;
 
 let id: ID = 1;
 
-const num = Math.pow(10, 12);
-const getISBN = () => Math.floor(num + Math.random() * (num * 9));
-
-const newTestBook: Omit<IBook, "id"> = {
-  title: "Test Book",
-  year: 2019,
-  pages: 100,
-  genre: "Fantasy",
-  language: "English",
-  edition: "First edition",
-  isbn: getISBN()
+const newTestAuthor: Omit<IAuthor, "id"> = {
+  name: "Test Author"
 };
 
-const updateTestBook: Omit<IBook, "id"> = {
-  title: "Updated Test Book",
-  year: 2020,
-  pages: 200,
-  genre: "Science fiction",
-  language: "Spanish",
-  edition: "Second edition",
-  isbn: getISBN()
+const updateTestAuthor: Omit<IAuthor, "id"> = {
+  name: "Updated Test Author"
 };
 
 Deno.test(`route GET ${endpoint}`, async () => {
@@ -45,7 +30,7 @@ Deno.test(`route POST ${endpoint}`, async () => {
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newTestBook)
+    body: JSON.stringify(newTestAuthor)
   });
 
   assertEquals(res.ok, true);
@@ -53,7 +38,7 @@ Deno.test(`route POST ${endpoint}`, async () => {
   const data = await res.json();
 
   id = data.data.id;
-  assertEquals(data, goodResponse({ id, ...newTestBook }));
+  assertEquals(data, goodResponse({ id, ...newTestAuthor }));
 });
 
 Deno.test(`route GET ${endpoint}${param}`, async () => {
@@ -63,21 +48,21 @@ Deno.test(`route GET ${endpoint}${param}`, async () => {
 
   const data = await res.json();
 
-  assertEquals(data, goodResponse({ id, ...newTestBook }));
+  assertEquals(data, goodResponse({ id, ...newTestAuthor }));
 });
 
 Deno.test(`route PUT ${endpoint}${param}`, async () => {
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updateTestBook)
+    body: JSON.stringify(updateTestAuthor)
   });
 
   assertEquals(res.ok, true);
 
   const data = await res.json();
 
-  assertEquals(data, goodResponse({ id, ...updateTestBook }));
+  assertEquals(data, goodResponse({ id, ...updateTestAuthor }));
 });
 
 Deno.test(`route DELETE ${endpoint}${param}`, async () => {
@@ -92,12 +77,12 @@ Deno.test(`route DELETE ${endpoint}${param}`, async () => {
   assertEquals(data, goodResponse(true));
 });
 
-Deno.test("make sure book is deleted", async () => {
+Deno.test("make sure author is deleted", async () => {
   const res = await fetch(`${url}/${id}`);
 
   assertEquals(res.ok, false);
 
   const data = await res.json();
 
-  assertEquals(data, notFoundResponse("book"));
+  assertEquals(data, notFoundResponse("author"));
 });

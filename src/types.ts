@@ -14,6 +14,10 @@ export interface IBook extends INode {
   isbn: number;
 }
 
+export interface IAuthor extends INode {
+  name: string;
+}
+
 export interface IError {
   path: string | null;
   message: string;
@@ -33,7 +37,7 @@ export interface IErrorResponse {
 
 export type IResponse<T> = IErrorResponse | IGoodResponse<T>;
 
-export interface MinMaxRule {
+interface MinMaxRule {
   min?: number;
   max?: number;
 }

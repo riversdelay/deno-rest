@@ -1,4 +1,4 @@
-import { ValidatorRules, IBook, Rules } from "../types.ts";
+import { ValidatorRules, Rules, IBook, IAuthor } from "../types.ts";
 import { minStringLength, maxStringLength } from "../utils/constants.ts";
 
 export const idValidationSchema: ValidatorRules = {
@@ -58,3 +58,13 @@ export const bookValidationSchema = (): Rules<Omit<IBook, "id">> => ({
     }
   }
 });
+
+export const authorValidationSchema: Rules<Omit<IAuthor, "id">> = {
+  name: {
+    required: true,
+    string: {
+      min: minStringLength,
+      max: maxStringLength
+    }
+  }
+};

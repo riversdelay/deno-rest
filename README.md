@@ -36,7 +36,7 @@ POST request to http://localhost:4000/api/authors creates and returns an author\
 PUT request to http://localhost:4000/api/authors/:id updates and returns an author\
 DELETE request to http://localhost:4000/api/authors/:id deletes an author and the author's books
 
-GET request to http://localhost:4000/api/books returns all books\
+GET request to http://localhost:4000/api/books returns all books or all books from author\
 GET request to http://localhost:4000/api/books/:id returns a single book\
 POST request to http://localhost:4000/api/books creates and returns a book\
 PUT request to http://localhost:4000/api/books/:id updates and returns a book\

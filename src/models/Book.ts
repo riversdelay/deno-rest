@@ -28,9 +28,22 @@ export class Book {
     };
   }
 
-  static async find(): Promise<IBook[]> {
+  static async find(authorId?: ID): Promise<IBook[]> {
+    let sql = `SELECT * FROM ${this.table}`;
+
+    if (authorId) {
+      sql += " WHERE authorId = $1";
+    }
+
+    sql += " ORDER BY id;";
+
     const result = await client.query(
-      `SELECT * FROM ${this.table} ORDER BY id;`
+      authorId
+        ? {
+            text: sql,
+            args: [authorId]
+          }
+        : sql
     );
 
     return result.rows.map(row => this.formatRow(row));
@@ -82,7 +95,7 @@ export class Book {
     language,
     edition,
     isbn
-  }: IBook): Promise<IBook | null> {
+  }: Omit<IBook, "authorId">): Promise<IBook | null> {
     const result = await client.query({
       text: `
         UPDATE ${this.table} SET

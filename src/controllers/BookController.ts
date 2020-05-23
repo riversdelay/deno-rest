@@ -15,9 +15,28 @@ import {
 
 export class BookController {
   // @route GET /api/books
-  static async getAll({ res }: Context): Promise<IResponse<IBook[]>> {
+  static async getAll({ req, res }: Context): Promise<IResponse<IBook[]>> {
+    const { authorId } = req.body;
+
+    const v = new Validator(
+      { authorId },
+      {
+        authorId: {
+          ...idValidationSchema,
+          required: false
+        }
+      }
+    );
+
+    const errors = v.validate();
+
+    if (errors.length) {
+      res.setStatus(400);
+      return errorResponse(errors);
+    }
+
     try {
-      const books = await Book.find();
+      const books = await Book.find(authorId);
       return goodResponse(books);
     } catch (err) {
       console.log(err);
@@ -109,9 +128,9 @@ export class BookController {
         language,
         edition,
         isbn
-      } = req.body as Omit<IBook, "id">;
+      } = req.body as Omit<IBook, "id" | "authorId">;
 
-      const args: IBook = {
+      const args: Omit<IBook, "authorId"> = {
         id: req.params.id as ID,
         title,
         year,

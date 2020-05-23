@@ -9,7 +9,7 @@ export interface IAuthor extends INode {
 }
 
 export interface IBook extends INode {
-  authorId?: ID;
+  authorId: ID;
   title: string;
   year: number;
   pages: number;

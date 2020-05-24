@@ -61,16 +61,7 @@ export class Book {
     return this.formatRow(row);
   }
 
-  static async insert({
-    authorId,
-    title,
-    year,
-    pages,
-    genre,
-    language,
-    edition,
-    isbn
-  }: Omit<IBook, "id">): Promise<IBook> {
+  static async insert(book: Omit<IBook, "id">): Promise<IBook> {
     const result = await client.query({
       text: `
         INSERT INTO
@@ -80,22 +71,13 @@ export class Book {
             ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *;
       `,
-      args: [authorId, title, year, pages, genre, language, edition, isbn]
+      args: Object.values(book)
     });
 
     return this.formatRow(result.rows[0]);
   }
 
-  static async update({
-    id,
-    title,
-    year,
-    pages,
-    genre,
-    language,
-    edition,
-    isbn
-  }: Omit<IBook, "authorId">): Promise<IBook | null> {
+  static async update(book: Omit<IBook, "authorId">): Promise<IBook | null> {
     const result = await client.query({
       text: `
         UPDATE ${this.table} SET
@@ -109,7 +91,7 @@ export class Book {
         WHERE id = $1
         RETURNING *;
       `,
-      args: [id, title, year, pages, genre, language, edition, isbn]
+      args: Object.values(book)
     });
 
     const [row] = result.rows;

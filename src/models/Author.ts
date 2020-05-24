@@ -28,19 +28,19 @@ export class Author {
     return this.formatRow(row);
   }
 
-  static async insert({ name }: Omit<IAuthor, "id">): Promise<IAuthor> {
+  static async insert(author: Omit<IAuthor, "id">): Promise<IAuthor> {
     const result = await client.query({
       text: `INSERT INTO ${this.table}(name) VALUES($1) RETURNING *;`,
-      args: [name]
+      args: Object.values(author)
     });
 
     return this.formatRow(result.rows[0]);
   }
 
-  static async update({ id, name }: IAuthor): Promise<IAuthor | null> {
+  static async update(author: IAuthor): Promise<IAuthor | null> {
     const result = await client.query({
       text: `UPDATE ${this.table} SET name = $2 WHERE id = $1 RETURNING *;`,
-      args: [id, name]
+      args: Object.values(author)
     });
 
     const [row] = result.rows;

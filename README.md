@@ -42,6 +42,11 @@ POST request to http://localhost:4000/api/books creates and returns a book\
 PUT request to http://localhost:4000/api/books/:id updates and returns a book\
 DELETE request to http://localhost:4000/api/books/:id deletes a book
 
+# Seeder
+
+I created a small seeder to get the api going\
+To use it, run `deno run --allow-net --allow-read --allow-env src/db/seeder.ts`
+
 # Todo
 
 1. Serve data with relations (send author with the list of books for that author and book with the author data)

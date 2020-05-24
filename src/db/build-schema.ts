@@ -20,7 +20,7 @@ await client.query(`
     genre varchar(256) NOT NULL,
     language varchar(256) NOT NULL,
     edition varchar(256) NOT NULL,
-    isbn bigint NOT NULL
+    isbn varchar(13) NOT NULL
   );
 `);
 

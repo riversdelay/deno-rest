@@ -1,13 +1,13 @@
-import { apiEndpoint, host } from "./constants.ts";
+import { authorEndpoint, bookEndpoint } from "../utils/constants.ts";
 import { ID, IAuthor, IBook } from "../types.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { goodResponse, notFoundResponse } from "../utils/responses.ts";
 
-const authorEndpoint = `${host}${apiEndpoint}/authors`;
-const bookEndpoint = `${host}${apiEndpoint}/books`;
+const host = "http://localhost:4000";
+const authorUrl = host + authorEndpoint;
+const bookUrl = host + bookEndpoint;
 
-let authorId: ID;
-let bookId: ID;
+let authorId: ID, bookId: ID;
 
 const newTestAuthor: Omit<IAuthor, "id"> = {
   name: "Test Author"
@@ -17,9 +17,6 @@ const updateTestAuthor: Omit<IAuthor, "id"> = {
   name: "Updated Test Author"
 };
 
-const num = Math.pow(10, 12);
-const getISBN = () => Math.floor(num + Math.random() * (num * 9)).toString();
-
 const newTestBook: Omit<IBook, "id" | "authorId"> = {
   title: "Test Book",
   year: 2019,
@@ -27,7 +24,7 @@ const newTestBook: Omit<IBook, "id" | "authorId"> = {
   genre: "Fantasy",
   language: "English",
   edition: "First edition",
-  isbn: getISBN()
+  isbn: "1234567890"
 };
 
 const updateTestBook: Omit<IBook, "id" | "authorId"> = {
@@ -35,13 +32,13 @@ const updateTestBook: Omit<IBook, "id" | "authorId"> = {
   year: 2020,
   pages: 200,
   genre: "Science fiction",
-  language: "Spanish",
+  language: "Portuguese",
   edition: "Second edition",
-  isbn: getISBN()
+  isbn: "0987654321234"
 };
 
 Deno.test("get all authors", async () => {
-  const res = await fetch(authorEndpoint);
+  const res = await fetch(authorUrl);
 
   assertEquals(res.ok, true);
 
@@ -51,7 +48,7 @@ Deno.test("get all authors", async () => {
 });
 
 Deno.test("get all books", async () => {
-  const res = await fetch(bookEndpoint);
+  const res = await fetch(bookUrl);
 
   assertEquals(res.ok, true);
 
@@ -61,7 +58,7 @@ Deno.test("get all books", async () => {
 });
 
 Deno.test("create an author", async () => {
-  const res = await fetch(authorEndpoint, {
+  const res = await fetch(authorUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newTestAuthor)
@@ -76,7 +73,7 @@ Deno.test("create an author", async () => {
 });
 
 Deno.test("create a book", async () => {
-  const res = await fetch(bookEndpoint, {
+  const res = await fetch(bookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ authorId, ...newTestBook })
@@ -91,7 +88,7 @@ Deno.test("create a book", async () => {
 });
 
 Deno.test("get a single author", async () => {
-  const res = await fetch(`${authorEndpoint}/${authorId}`);
+  const res = await fetch(`${authorUrl}/${authorId}`);
 
   assertEquals(res.ok, true);
 
@@ -101,7 +98,7 @@ Deno.test("get a single author", async () => {
 });
 
 Deno.test("get a single book", async () => {
-  const res = await fetch(`${bookEndpoint}/${bookId}`);
+  const res = await fetch(`${bookUrl}/${bookId}`);
 
   assertEquals(res.ok, true);
 
@@ -111,7 +108,7 @@ Deno.test("get a single book", async () => {
 });
 
 Deno.test("update an author", async () => {
-  const res = await fetch(`${authorEndpoint}/${authorId}`, {
+  const res = await fetch(`${authorUrl}/${authorId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updateTestAuthor)
@@ -125,7 +122,7 @@ Deno.test("update an author", async () => {
 });
 
 Deno.test("update a book", async () => {
-  const res = await fetch(`${bookEndpoint}/${bookId}`, {
+  const res = await fetch(`${bookUrl}/${bookId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updateTestBook)
@@ -139,7 +136,7 @@ Deno.test("update a book", async () => {
 });
 
 Deno.test("delete a book", async () => {
-  const res = await fetch(`${bookEndpoint}/${bookId}`, {
+  const res = await fetch(`${bookUrl}/${bookId}`, {
     method: "DELETE"
   });
 
@@ -151,7 +148,7 @@ Deno.test("delete a book", async () => {
 });
 
 Deno.test("make sure book is deleted", async () => {
-  const res = await fetch(`${bookEndpoint}/${bookId}`);
+  const res = await fetch(`${bookUrl}/${bookId}`);
 
   assertEquals(res.ok, false);
 
@@ -161,7 +158,7 @@ Deno.test("make sure book is deleted", async () => {
 });
 
 Deno.test("delete an author", async () => {
-  const res = await fetch(`${authorEndpoint}/${authorId}`, {
+  const res = await fetch(`${authorUrl}/${authorId}`, {
     method: "DELETE"
   });
 
@@ -173,7 +170,7 @@ Deno.test("delete an author", async () => {
 });
 
 Deno.test("make sure author is deleted", async () => {
-  const res = await fetch(`${authorEndpoint}/${authorId}`);
+  const res = await fetch(`${authorUrl}/${authorId}`);
 
   assertEquals(res.ok, false);
 

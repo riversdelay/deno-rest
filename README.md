@@ -25,22 +25,23 @@
 
 # Endpoints
 
-1. http://localhost:4000/api/authors
-2. http://localhost:4000/api/authors/:id
-3. http://localhost:4000/api/books
-4. http://localhost:4000/api/books/:id
+Base api url is http://localhost:4000/api
 
-GET request to http://localhost:4000/api/authors returns all authors\
-GET request to http://localhost:4000/api/authors/:id returns a single author\
-POST request to http://localhost:4000/api/authors creates and returns an author\
-PUT request to http://localhost:4000/api/authors/:id updates and returns an author\
-DELETE request to http://localhost:4000/api/authors/:id deletes an author and the author's books
+| METHOD | ENDPOINT     | Description                              |
+| ------ | ------------ | ---------------------------------------- |
+| GET    | /authors     | Returns all authors                      |
+| GET    | /authors/:id | Returns a single author                  |
+| POST   | /authors     | Creates and returns an author            |
+| PUT    | /authors/:id | Updates and returns an author            |
+| DELETE | /authors/:id | Deletes an author and the author's books |
 
-GET request to http://localhost:4000/api/books returns all books or all books from author\
-GET request to http://localhost:4000/api/books/:id returns a single book\
-POST request to http://localhost:4000/api/books creates and returns a book\
-PUT request to http://localhost:4000/api/books/:id updates and returns a book\
-DELETE request to http://localhost:4000/api/books/:id deletes a book
+| METHOD | ENDPOINT   | Description                                |
+| ------ | ---------- | ------------------------------------------ |
+| GET    | /books     | Returns all books or all books from author |
+| GET    | /books/:id | Returns a single book                      |
+| POST   | /books     | Creates and returns a book                 |
+| PUT    | /books/:id | Updates and returns a book                 |
+| DELETE | /books/:id | Deletes a book                             |
 
 # Seeder
 

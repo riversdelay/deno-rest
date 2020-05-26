@@ -1,6 +1,7 @@
 import { Router } from "https://deno.land/x/denotrain@v0.4.4/mod.ts";
 import { AuthorController } from "../controllers/AuthorController.ts";
 
+// @for /api/authors
 const authorRouter = new Router();
 
 authorRouter.get("/", AuthorController.getAll);

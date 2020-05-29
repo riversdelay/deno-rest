@@ -55,3 +55,4 @@ To use it, run `deno run --allow-net --allow-read --allow-env src/db/seeder.ts`
 # Todo
 
 1. Serve data with relations (send author with the list of books for that author and book with the author data)
+2. More tests

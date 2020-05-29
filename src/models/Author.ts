@@ -1,8 +1,9 @@
+import { Model } from "./Model.ts";
 import { IAuthor, ID } from "../types.ts";
 import { client } from "../db/client.ts";
 
-export class Author {
-  private static table: string = "authors";
+export class Author extends Model {
+  protected static table: string = "authors";
 
   private static formatRow([id, name]: any[]): IAuthor {
     return { id, name };
@@ -29,19 +30,13 @@ export class Author {
   }
 
   static async insert(author: Omit<IAuthor, "id">): Promise<IAuthor> {
-    const result = await client.query({
-      text: `INSERT INTO ${this.table}(name) VALUES($1) RETURNING *;`,
-      args: Object.values(author)
-    });
+    const result = await client.query(this.buildInsertSQL(author));
 
     return this.formatRow(result.rows[0]);
   }
 
   static async update(author: IAuthor): Promise<IAuthor | null> {
-    const result = await client.query({
-      text: `UPDATE ${this.table} SET name = $2 WHERE id = $1 RETURNING *;`,
-      args: Object.values(author)
-    });
+    const result = await client.query(this.buildUpdateSQL(author));
 
     const [row] = result.rows;
     if (!row) return null;

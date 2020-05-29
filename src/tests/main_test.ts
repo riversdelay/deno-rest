@@ -40,7 +40,7 @@ const updateTestBook: Omit<IBook, "id" | "authorId"> = {
 Deno.test("get all authors", async () => {
   const res = await fetch(authorUrl);
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -50,7 +50,7 @@ Deno.test("get all authors", async () => {
 Deno.test("get all books", async () => {
   const res = await fetch(bookUrl);
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -64,7 +64,7 @@ Deno.test("create an author", async () => {
     body: JSON.stringify(newTestAuthor)
   });
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 201);
 
   const data = await res.json();
 
@@ -79,7 +79,7 @@ Deno.test("create a book", async () => {
     body: JSON.stringify({ authorId, ...newTestBook })
   });
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 201);
 
   const data = await res.json();
 
@@ -90,7 +90,7 @@ Deno.test("create a book", async () => {
 Deno.test("get a single author", async () => {
   const res = await fetch(`${authorUrl}/${authorId}`);
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -100,7 +100,7 @@ Deno.test("get a single author", async () => {
 Deno.test("get a single book", async () => {
   const res = await fetch(`${bookUrl}/${bookId}`);
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -114,7 +114,7 @@ Deno.test("update an author", async () => {
     body: JSON.stringify(updateTestAuthor)
   });
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -128,7 +128,7 @@ Deno.test("update a book", async () => {
     body: JSON.stringify(updateTestBook)
   });
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -140,7 +140,7 @@ Deno.test("delete a book", async () => {
     method: "DELETE"
   });
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -150,7 +150,7 @@ Deno.test("delete a book", async () => {
 Deno.test("make sure book is deleted", async () => {
   const res = await fetch(`${bookUrl}/${bookId}`);
 
-  assertEquals(res.ok, false);
+  assertEquals(res.status, 400);
 
   const data = await res.json();
 
@@ -162,7 +162,7 @@ Deno.test("delete an author", async () => {
     method: "DELETE"
   });
 
-  assertEquals(res.ok, true);
+  assertEquals(res.status, 200);
 
   const data = await res.json();
 
@@ -172,7 +172,7 @@ Deno.test("delete an author", async () => {
 Deno.test("make sure author is deleted", async () => {
   const res = await fetch(`${authorUrl}/${authorId}`);
 
-  assertEquals(res.ok, false);
+  assertEquals(res.status, 400);
 
   const data = await res.json();
 

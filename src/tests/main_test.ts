@@ -1,6 +1,6 @@
 import { authorEndpoint, bookEndpoint } from "../utils/constants.ts";
 import { ID, IAuthor, IBook } from "../types.ts";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@v0.54.0/testing/asserts.ts";
 import { goodResponse, notFoundResponse } from "../utils/responses.ts";
 
 const host = "http://localhost:4000";

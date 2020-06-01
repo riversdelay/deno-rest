@@ -1,4 +1,4 @@
-import { Context } from "https://deno.land/x/denotrain@v0.4.4/mod.ts";
+import { Context } from "../dependencies.ts";
 import { IResponse, IBook, ID } from "../types.ts";
 import { Book } from "../models/Book.ts";
 import { Validator } from "../validation/Validator.ts";

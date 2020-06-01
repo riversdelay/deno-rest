@@ -1,5 +1,5 @@
 import { IError, IErrorResponse, IGoodResponse } from "../types.ts";
-import { Response } from "https://deno.land/x/denotrain@v0.4.4/mod.ts";
+import { Response } from "../dependencies.ts";
 
 export const errorResponse = (errors: IError[]): IErrorResponse => ({
   ok: false,
@@ -15,6 +15,7 @@ export const goodResponse = <T>(data: T): IGoodResponse<T> => ({
 
 export const serverErrorResponse = (res: Response) => {
   res.setStatus(500);
+
   return errorResponse([
     {
       path: null,

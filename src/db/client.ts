@@ -1,5 +1,5 @@
-import "https://deno.land/x/dotenv/load.ts";
-import { Client } from "https://deno.land/x/postgres/mod.ts";
+import "https://deno.land/x/dotenv@v0.4.1/load.ts";
+import { Client } from "../dependencies.ts";
 import { isTesting } from "../utils/isTesting.ts";
 
 const env = Deno.env.toObject();

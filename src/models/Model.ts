@@ -1,4 +1,4 @@
-import { QueryConfig } from "https://deno.land/x/postgres/query.ts";
+import { QueryConfig } from "../dependencies.ts";
 import { ID } from "../types.ts";
 
 export class Model {

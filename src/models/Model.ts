@@ -2,7 +2,7 @@ import { QueryConfig } from "../dependencies.ts";
 import { ID } from "../types.ts";
 
 export class Model {
-  protected static table: string;
+  protected static readonly table: string;
 
   protected static buildInsertSQL<T extends object>(obj: T): QueryConfig {
     const keys = Object.keys(obj);

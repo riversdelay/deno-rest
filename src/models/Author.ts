@@ -3,7 +3,7 @@ import { IAuthor, ID } from "../types.ts";
 import { client } from "../db/client.ts";
 
 export class Author extends Model {
-  protected static table: string = "authors";
+  protected static readonly table: string = "authors";
 
   private static formatRow([id, name]: any[]): IAuthor {
     return { id, name };

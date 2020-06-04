@@ -3,7 +3,7 @@ import { IBook, ID } from "../types.ts";
 import { client } from "../db/client.ts";
 
 export class Book extends Model {
-  protected static table: string = "books";
+  protected static readonly table: string = "books";
 
   private static formatRow([
     id,

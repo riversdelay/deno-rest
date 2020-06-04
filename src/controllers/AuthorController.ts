@@ -1,5 +1,5 @@
 import { Context } from "../dependencies.ts";
-import { IResponse, IAuthor, ID } from "../types.ts";
+import { IController, IResponse, IAuthor, ID } from "../types.ts";
 import { Author } from "../models/Author.ts";
 import { Validator } from "../validation/Validator.ts";
 import {
@@ -13,9 +13,9 @@ import {
   authorValidationSchema
 } from "../validation/schemas.ts";
 
-export class AuthorController {
+export class AuthorController implements IController {
   // @route GET /api/authors
-  static async getAll({ res }: Context): Promise<IResponse<IAuthor[]>> {
+  async getAll({ res }: Context): Promise<IResponse<IAuthor[]>> {
     try {
       const authors = await Author.find();
       return goodResponse(authors);
@@ -26,7 +26,7 @@ export class AuthorController {
   }
 
   // @route GET /api/authors/:id
-  static async getSingle({ req, res }: Context): Promise<IResponse<IAuthor>> {
+  async getSingle({ req, res }: Context): Promise<IResponse<IAuthor>> {
     const id = req.params.id as ID;
 
     const v = new Validator({ id }, { id: idValidationSchema });
@@ -53,7 +53,7 @@ export class AuthorController {
   }
 
   // @route POST /api/authors
-  static async create({ req, res }: Context): Promise<IResponse<IAuthor>> {
+  async create({ req, res }: Context): Promise<IResponse<IAuthor>> {
     try {
       const { name } = req.body as Omit<IAuthor, "id">;
       const args: Omit<IAuthor, "id"> = { name };
@@ -77,7 +77,7 @@ export class AuthorController {
   }
 
   // @route PUT /api/authors/:id
-  static async edit({ req, res }: Context): Promise<IResponse<IAuthor>> {
+  async edit({ req, res }: Context): Promise<IResponse<IAuthor>> {
     try {
       const { name } = req.body as Omit<IAuthor, "id">;
       const args: IAuthor = { id: req.params.id as ID, name };
@@ -109,7 +109,7 @@ export class AuthorController {
   }
 
   // @route DELETE /api/authors/:id
-  static async remove({ req, res }: Context): Promise<IResponse<boolean>> {
+  async remove({ req, res }: Context): Promise<IResponse<IAuthor>> {
     const id = req.params.id as ID;
 
     const v = new Validator({ id }, { id: idValidationSchema });
@@ -121,8 +121,16 @@ export class AuthorController {
     }
 
     try {
+      const author = await Author.findOne(id);
+
+      if (!author) {
+        res.setStatus(400);
+        return notFoundResponse("author");
+      }
+
       await Author.delete(id);
-      return goodResponse(true);
+
+      return goodResponse(author);
     } catch (err) {
       console.log(err);
       return serverErrorResponse(res);

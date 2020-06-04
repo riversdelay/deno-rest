@@ -1,11 +1,11 @@
-import { authorEndpoint, bookEndpoint } from "../utils/constants.ts";
+import { apiEndpoint } from "../utils/constants.ts";
 import { ID, IAuthor, IBook } from "../types.ts";
 import { assertEquals } from "https://deno.land/std@v0.54.0/testing/asserts.ts";
 import { goodResponse, notFoundResponse } from "../utils/responses.ts";
 
 const host = "http://localhost:4000";
-const authorUrl = host + authorEndpoint;
-const bookUrl = host + bookEndpoint;
+const authorUrl = `${host + apiEndpoint}/authors`;
+const bookUrl = `${host + apiEndpoint}/books`;
 
 let authorId: ID, bookId: ID;
 
@@ -144,7 +144,7 @@ Deno.test("delete a book", async () => {
 
   const data = await res.json();
 
-  assertEquals(data, goodResponse(true));
+  assertEquals(data, goodResponse({ id: bookId, authorId, ...updateTestBook }));
 });
 
 Deno.test("make sure book is deleted", async () => {
@@ -166,7 +166,7 @@ Deno.test("delete an author", async () => {
 
   const data = await res.json();
 
-  assertEquals(data, goodResponse(true));
+  assertEquals(data, goodResponse({ id: authorId, ...updateTestAuthor }));
 });
 
 Deno.test("make sure author is deleted", async () => {

@@ -1,5 +1,5 @@
 import { Context } from "../dependencies.ts";
-import { IResponse, IBook, ID } from "../types.ts";
+import { IController, IResponse, IBook, ID } from "../types.ts";
 import { Book } from "../models/Book.ts";
 import { Validator } from "../validation/Validator.ts";
 import {
@@ -13,9 +13,9 @@ import {
   bookValidationSchema
 } from "../validation/schemas.ts";
 
-export class BookController {
+export class BookController implements IController {
   // @route GET /api/books
-  static async getAll({ req, res }: Context): Promise<IResponse<IBook[]>> {
+  async getAll({ req, res }: Context): Promise<IResponse<IBook[]>> {
     const { authorId } = req.body;
 
     const v = new Validator(
@@ -45,7 +45,7 @@ export class BookController {
   }
 
   // @route GET /api/books/:id
-  static async getSingle({ req, res }: Context): Promise<IResponse<IBook>> {
+  async getSingle({ req, res }: Context): Promise<IResponse<IBook>> {
     const id = req.params.id as ID;
 
     const v = new Validator({ id }, { id: idValidationSchema });
@@ -72,7 +72,7 @@ export class BookController {
   }
 
   // @route POST /api/books
-  static async create({ req, res }: Context): Promise<IResponse<IBook>> {
+  async create({ req, res }: Context): Promise<IResponse<IBook>> {
     try {
       const {
         authorId,
@@ -118,7 +118,7 @@ export class BookController {
   }
 
   // @route PUT /api/books/:id
-  static async edit({ req, res }: Context): Promise<IResponse<IBook>> {
+  async edit({ req, res }: Context): Promise<IResponse<IBook>> {
     try {
       const {
         title,
@@ -168,7 +168,7 @@ export class BookController {
   }
 
   // @route DELETE /api/books/:id
-  static async remove({ req, res }: Context): Promise<IResponse<boolean>> {
+  async remove({ req, res }: Context): Promise<IResponse<IBook>> {
     const id = req.params.id as ID;
 
     const v = new Validator({ id }, { id: idValidationSchema });
@@ -180,8 +180,16 @@ export class BookController {
     }
 
     try {
+      const book = await Book.findOne(id);
+
+      if (!book) {
+        res.setStatus(400);
+        return notFoundResponse("book");
+      }
+
       await Book.delete(id);
-      return goodResponse(true);
+
+      return goodResponse(book);
     } catch (err) {
       console.log(err);
       return serverErrorResponse(res);

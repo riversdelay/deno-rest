@@ -1,14 +1,15 @@
 import { IController } from "../types.ts";
 import { Router } from "../dependencies.ts";
 
-export const createRouter = (Controller: IController): Router => {
+export const createRouter = (Controller: new () => IController): Router => {
   const router = new Router();
+  const c = new Controller();
 
-  router.get("/", Controller.getAll);
-  router.get("/:id", Controller.getSingle);
-  router.post("/", Controller.create);
-  router.put("/:id", Controller.edit);
-  router.delete("/:id", Controller.remove);
+  router.get("/", c.getAll);
+  router.get("/:id", c.getSingle);
+  router.post("/", c.create);
+  router.put("/:id", c.edit);
+  router.delete("/:id", c.remove);
 
   return router;
 };

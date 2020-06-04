@@ -1,4 +1,5 @@
-import { Context, Router } from "./dependencies.ts";
+import { Context } from "./dependencies.ts";
+import { MyRouter } from "./utils/MyRouter.ts";
 
 export type ID = number;
 
@@ -64,5 +65,5 @@ export interface IController {
 
 export interface RouterData {
   endpoint: string;
-  router: Router;
+  router: MyRouter;
 }

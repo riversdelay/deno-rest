@@ -1,3 +1,5 @@
+import { Context, Router } from "./dependencies.ts";
+
 export type ID = number;
 
 interface INode {
@@ -51,3 +53,16 @@ export interface ValidatorRules {
 }
 
 export type Rules<T> = { [K in keyof T]?: ValidatorRules };
+
+export interface IController {
+  getAll(ctx: Context): any;
+  getSingle(ctx: Context): any;
+  create(ctx: Context): any;
+  edit(ctx: Context): any;
+  remove(ctx: Context): any;
+}
+
+export interface RouterData {
+  endpoint: string;
+  router: Router;
+}

@@ -15,7 +15,7 @@ const authors: Omit<IAuthor, "id">[] = [
   }
 ];
 
-const insertAuthorSQL = "INSERT INTO authors(name) VALUES($1) RETURNING id;";
+const insertAuthorSQL = `INSERT INTO authors("name") VALUES($1) RETURNING "id";`;
 
 const insertAuthorsResult = await client.multiQuery(
   authors.map(author => ({
@@ -184,7 +184,7 @@ const books: Omit<IBook, "id">[] = [
 const insertBookSQL = `
   INSERT INTO
     books
-      (authorId, title, year, pages, genre, language, edition, isbn)
+      ("authorId", "title", "year", "pages", "genre", "language", "edition", "isbn")
     VALUES
       ($1, $2, $3, $4, $5, $6, $7, $8);
 `;

@@ -5,38 +5,14 @@ import { client } from "../db/client.ts";
 export class Book extends Model {
   protected static readonly table: string = "books";
 
-  private static formatRow([
-    id,
-    authorId,
-    title,
-    year,
-    pages,
-    genre,
-    language,
-    edition,
-    isbn
-  ]: any[]): IBook {
-    return {
-      id,
-      authorId,
-      title,
-      year,
-      pages,
-      genre,
-      language,
-      edition,
-      isbn
-    };
-  }
-
   static async find(authorId?: ID): Promise<IBook[]> {
     let sql = `SELECT * FROM ${this.table}`;
 
     if (authorId) {
-      sql += " WHERE authorId = $1";
+      sql += ` WHERE "authorId" = $1`;
     }
 
-    sql += " ORDER BY id;";
+    sql += ` ORDER BY "id";`;
 
     const result = await client.query(
       authorId
@@ -47,25 +23,27 @@ export class Book extends Model {
         : sql
     );
 
-    return result.rows.map(row => this.formatRow(row));
+    return result.rows.map(row =>
+      this.formatRow(row, result.rowDescription.columns)
+    );
   }
 
   static async findOne(id: ID): Promise<IBook | null> {
     const result = await client.query({
-      text: `SELECT * FROM ${this.table} WHERE id = $1 LIMIT 1;`,
+      text: `SELECT * FROM ${this.table} WHERE "id" = $1 LIMIT 1;`,
       args: [id]
     });
 
     const [row] = result.rows;
     if (!row) return null;
 
-    return this.formatRow(row);
+    return this.formatRow(row, result.rowDescription.columns);
   }
 
   static async insert(book: Omit<IBook, "id">): Promise<IBook> {
     const result = await client.query(this.buildInsertSQL(book));
 
-    return this.formatRow(result.rows[0]);
+    return this.formatRow(result.rows[0], result.rowDescription.columns);
   }
 
   static async update(book: Omit<IBook, "authorId">): Promise<IBook | null> {
@@ -74,12 +52,12 @@ export class Book extends Model {
     const [row] = result.rows;
     if (!row) return null;
 
-    return this.formatRow(row);
+    return this.formatRow(row, result.rowDescription.columns);
   }
 
   static async delete(id: ID): Promise<void> {
     await client.query({
-      text: `DELETE FROM ${this.table} WHERE id = $1;`,
+      text: `DELETE FROM ${this.table} WHERE "id" = $1;`,
       args: [id]
     });
   }

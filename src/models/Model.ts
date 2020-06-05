@@ -13,9 +13,7 @@ export class Model {
   }
 
   protected static buildInsert<T extends object>(obj: T) {
-    const keys = Object.keys(obj);
-
-    const [columns, values] = keys.reduce<[string[], string[]]>(
+    const [columns, values] = Object.keys(obj).reduce<[string[], string[]]>(
       ([c, v], key, i) => [
         [...c, `"${key}"`],
         [...v, `$${i + 1}`]
@@ -26,10 +24,8 @@ export class Model {
     return client.query({
       text: `
         INSERT INTO 
-          ${this.table}
-            (${columns.join(",")})
-          VALUES
-            (${values.join(",")})
+          ${this.table}(${columns.join(",")})
+          VALUES(${values.join(",")})
         RETURNING *;
       `,
       args: Object.values(obj)
@@ -40,19 +36,18 @@ export class Model {
     const { id } = obj;
     delete obj.id;
 
-    const keys = Object.keys(obj);
-
-    const columnsValues = keys.reduce((sql, key, i) => {
-      // add 1 extra because id will be the first
-      sql += `"${key}" = $${i + 2}`;
-
-      if (i !== keys.length - 1) sql += ",";
-
-      return sql;
-    }, "");
+    const columnsValues = Object.keys(obj).reduce<string[]>(
+      (cv, key, i) => [...cv, `"${key}" = $${i + 2}`],
+      []
+    );
 
     return client.query({
-      text: `UPDATE ${this.table} SET ${columnsValues} WHERE "id" = $1 RETURNING *;`,
+      text: `
+        UPDATE ${this.table} SET
+          ${columnsValues.join(",")}
+          WHERE "id" = $1
+        RETURNING *;
+      `,
       args: [id, ...Object.values(obj)]
     });
   }

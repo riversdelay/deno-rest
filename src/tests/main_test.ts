@@ -57,6 +57,19 @@ Deno.test("get all books", async () => {
   assertEquals(data, goodResponse([]));
 });
 
+Deno.test("get all books from author", async () => {
+  const res = await fetch(bookUrl, {
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ authorId })
+  });
+
+  assertEquals(res.status, 200);
+
+  const data = await res.json();
+
+  assertEquals(data, goodResponse([]));
+});
+
 Deno.test("create an author", async () => {
   const res = await fetch(authorUrl, {
     method: "POST",

@@ -6,40 +6,46 @@ export class Author extends Model {
   protected static readonly table: string = "authors";
 
   static async find(): Promise<IAuthor[]> {
-    const result = await client.query(
-      `SELECT * FROM ${this.table} ORDER BY "id";`
-    );
+    const {
+      rows,
+      rowDescription: { columns }
+    } = await client.query(`SELECT * FROM ${this.table} ORDER BY "id";`);
 
-    return result.rows.map(row =>
-      this.formatRow(row, result.rowDescription.columns)
-    );
+    return rows.map(row => this.formatRow(row, columns));
   }
 
   static async findOne(id: ID): Promise<IAuthor | null> {
-    const result = await client.query({
+    const {
+      rows: [row],
+      rowDescription: { columns }
+    } = await client.query({
       text: `SELECT * FROM ${this.table} WHERE "id" = $1 LIMIT 1;`,
       args: [id]
     });
 
-    const [row] = result.rows;
     if (!row) return null;
 
-    return this.formatRow(row, result.rowDescription.columns);
+    return this.formatRow(row, columns);
   }
 
   static async insert(author: Omit<IAuthor, "id">): Promise<IAuthor> {
-    const result = await this.buildInsert(author);
+    const {
+      rows: [row],
+      rowDescription: { columns }
+    } = await this.buildInsert(author);
 
-    return this.formatRow(result.rows[0], result.rowDescription.columns);
+    return this.formatRow(row, columns);
   }
 
   static async update(author: IAuthor): Promise<IAuthor | null> {
-    const result = await this.buildUpdate(author);
+    const {
+      rows: [row],
+      rowDescription: { columns }
+    } = await this.buildUpdate(author);
 
-    const [row] = result.rows;
     if (!row) return null;
 
-    return this.formatRow(row, result.rowDescription.columns);
+    return this.formatRow(row, columns);
   }
 
   static async delete(id: ID): Promise<void> {

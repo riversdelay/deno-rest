@@ -1,5 +1,5 @@
 import { Column } from "../dependencies.ts";
-import { QueryConfig } from "../dependencies.ts";
+import { client } from "../db/client.ts";
 import { ID } from "../types.ts";
 
 export class Model {
@@ -12,7 +12,7 @@ export class Model {
     );
   }
 
-  protected static buildInsertSQL<T extends object>(obj: T): QueryConfig {
+  protected static buildInsert<T extends object>(obj: T) {
     const keys = Object.keys(obj);
 
     const [columns, values] = keys.reduce<[string[], string[]]>(
@@ -23,7 +23,7 @@ export class Model {
       [[], []]
     );
 
-    return {
+    return client.query({
       text: `
         INSERT INTO 
           ${this.table}
@@ -33,10 +33,10 @@ export class Model {
         RETURNING *;
       `,
       args: Object.values(obj)
-    };
+    });
   }
 
-  protected static buildUpdateSQL<T extends { id: ID }>(obj: T): QueryConfig {
+  protected static buildUpdate<T extends { id: ID }>(obj: T) {
     const { id } = obj;
     delete obj.id;
 
@@ -51,9 +51,9 @@ export class Model {
       return sql;
     }, "");
 
-    return {
+    return client.query({
       text: `UPDATE ${this.table} SET ${columnsValues} WHERE "id" = $1 RETURNING *;`,
       args: [id, ...Object.values(obj)]
-    };
+    });
   }
 }

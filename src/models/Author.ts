@@ -28,13 +28,13 @@ export class Author extends Model {
   }
 
   static async insert(author: Omit<IAuthor, "id">): Promise<IAuthor> {
-    const result = await client.query(this.buildInsertSQL(author));
+    const result = await this.buildInsert(author);
 
     return this.formatRow(result.rows[0], result.rowDescription.columns);
   }
 
   static async update(author: IAuthor): Promise<IAuthor | null> {
-    const result = await client.query(this.buildUpdateSQL(author));
+    const result = await this.buildUpdate(author);
 
     const [row] = result.rows;
     if (!row) return null;

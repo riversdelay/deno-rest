@@ -41,13 +41,13 @@ export class Book extends Model {
   }
 
   static async insert(book: Omit<IBook, "id">): Promise<IBook> {
-    const result = await client.query(this.buildInsertSQL(book));
+    const result = await this.buildInsert(book);
 
     return this.formatRow(result.rows[0], result.rowDescription.columns);
   }
 
   static async update(book: Omit<IBook, "authorId">): Promise<IBook | null> {
-    const result = await client.query(this.buildUpdateSQL(book));
+    const result = await this.buildUpdate(book);
 
     const [row] = result.rows;
     if (!row) return null;

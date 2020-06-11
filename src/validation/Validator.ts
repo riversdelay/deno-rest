@@ -7,19 +7,19 @@ export class Validator<T extends object> {
     return value !== undefined;
   }
 
-  private isString(value: any): boolean {
+  private isString(value: any): value is string {
     return typeof value === "string";
   }
 
-  private isInt(value: any): boolean {
+  private isInt(value: any): value is number {
     return Number.isInteger(value);
   }
 
   private isISBN(value: any): boolean {
-    if (this.isInt(value) || this.isString(value)) {
-      const regexISBN = /^(\d{10}|\d{13})$/;
+    if (this.isString(value)) {
+      const regex = /^(\d{10}|\d{13})$/;
 
-      if (regexISBN.test(value.toString())) {
+      if (regex.test(value)) {
         return true;
       }
     }
